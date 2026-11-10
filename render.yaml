@@ -1,0 +1,27 @@
+# Render deployment config for Veil proxy.
+# Deploys a single web service that builds the React app and starts the
+# Express proxy server. The free tier auto-wakes on request — no credit card required.
+# Docs: https://render.com/docs/blueprint-spec
+
+services:
+  - type: web
+    name: veil-proxy
+    runtime: node
+    plan: free
+    # Build the React client, then start the Express server that serves
+    # both the built app and the proxy engine.
+    buildCommand: npm install && npm run build
+    startCommand: npm run start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      # Supabase credentials are injected from the dashboard or via the
+      # key below. Set these in the Render dashboard under Environment.
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: SUPABASE_ANON_KEY
+        sync: false
+    healthCheck:
+      path: /
